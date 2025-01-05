@@ -75,9 +75,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Display results from all steps
     println!("Results: {:?}", chain_res);
     // Example output format:
-    // chain_res["calc1"] => "8"
-    // chain_res["calc2"] => "18"
-    // chain_res["final"] => "Conclusion du calcul : 18"
+    // chain_res["analysis"] => "The code has potential performance issues..."
+    // chain_res["optimization"] => "Here are some suggested optimizations..."
+    // chain_res["final_code"] => "// Optimized version with comments..."
 
     Ok(())
 }
