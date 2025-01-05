@@ -1,5 +1,5 @@
 //! OpenAI API client implementation for chat and completion functionality.
-//! 
+//!
 //! This module provides integration with OpenAI's GPT models through their API.
 
 #[cfg(feature = "openai")]
@@ -23,6 +23,8 @@ pub struct OpenAI {
     pub system: Option<String>,
     pub timeout_seconds: Option<u64>,
     pub stream: Option<bool>,
+    pub top_p: Option<f32>,
+    pub top_k: Option<u32>,
     client: Client,
 }
 
@@ -44,6 +46,10 @@ struct OpenAIChatRequest<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     temperature: Option<f32>,
     stream: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    top_p: Option<f32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    top_k: Option<u32>,
 }
 
 /// Response from OpenAI's chat API endpoint.
@@ -86,6 +92,8 @@ impl OpenAI {
         timeout_seconds: Option<u64>,
         system: Option<String>,
         stream: Option<bool>,
+        top_p: Option<f32>,
+        top_k: Option<u32>,
     ) -> Self {
         let mut builder = Client::builder();
         if let Some(sec) = timeout_seconds {
@@ -99,6 +107,8 @@ impl OpenAI {
             system,
             timeout_seconds,
             stream,
+            top_p,
+            top_k,
             client: builder.build().expect("Failed to build reqwest Client"),
         }
     }
@@ -146,6 +156,8 @@ impl ChatProvider for OpenAI {
             max_tokens: self.max_tokens,
             temperature: self.temperature,
             stream: self.stream.unwrap_or(false),
+            top_p: self.top_p,
+            top_k: self.top_k,
         };
 
         let resp = self
