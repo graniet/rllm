@@ -4,13 +4,14 @@
 use std::collections::HashMap;
 
 use crate::{
-    chat::{ChatMessage, ChatRole, ChatProvider},
-    completion::{CompletionProvider, CompletionRequest},
+    chat::{ChatMessage, ChatRole},
+    completion::CompletionRequest,
     error::RllmError,
     LLMProvider,
 };
 
 /// Stores multiple LLM backends (OpenAI, Anthropic, etc.) identified by a key
+#[derive(Default)]
 pub struct LLMRegistry {
     backends: HashMap<String, Box<dyn LLMProvider>>,
 }
@@ -28,21 +29,20 @@ impl LLMRegistry {
     }
 
     /// Retrieves a backend by its identifier
-    pub fn get(&self, id: &str) -> Option<&Box<dyn LLMProvider>> {
-        self.backends.get(id)
+    pub fn get(&self, id: &str) -> Option<&dyn LLMProvider> {
+        self.backends.get(id).map(|b| b.as_ref())
     }
 }
 
 /// Builder pattern for LLMRegistry
+#[derive(Default)]
 pub struct LLMRegistryBuilder {
     registry: LLMRegistry,
 }
 
 impl LLMRegistryBuilder {
     pub fn new() -> Self {
-        Self {
-            registry: LLMRegistry::new()
-        }
+        Self::default()
     }
 
     /// Adds a backend under the given id
@@ -74,7 +74,6 @@ pub struct MultiChainStep {
 
     // Override parameters
     temperature: Option<f32>,
-    top_p: Option<f32>,
     max_tokens: Option<u32>,
 }
 
@@ -155,7 +154,6 @@ impl MultiChainStepBuilder {
             template: tmpl,
             mode: self.mode,
             temperature: self.temperature,
-            top_p: self.top_p,
             max_tokens: self.max_tokens,
         })
     }
@@ -190,13 +188,12 @@ impl<'a> MultiPromptChain<'a> {
             let prompt_text = self.replace_template(&step.template);
 
             // 2) Get the right backend
-            let llm = self
-                .registry
-                .get(&step.provider_id)
-                .ok_or_else(|| RllmError::InvalidRequest(format!(
+            let llm = self.registry.get(&step.provider_id).ok_or_else(|| {
+                RllmError::InvalidRequest(format!(
                     "No provider with id '{}' found in registry",
                     step.provider_id
-                )))?;
+                ))
+            })?;
 
             // 3) Execute
             let response = match step.mode {
