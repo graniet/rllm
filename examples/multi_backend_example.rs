@@ -26,6 +26,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .model("claude-3-5-sonnet-20240620")
         .build()?;
 
+    let deepseek_llm = LLMBuilder::new()
+        .backend(LLMBackend::DeepSeek)
+        .api_key(std::env::var("DEEPSEEK_API_KEY").unwrap_or("sk-TESTKEY".into()))
+        .model("deepseek-chat")
+        .build()?;
+
     // Ollama backend could also be added
     // let ollama_llm = LLMBuilder::new()
     //     .backend(LLMBackend::Ollama)
@@ -37,6 +43,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let registry = LLMRegistryBuilder::new()
         .register("openai", openai_llm)
         .register("anthro", anthro_llm)
+        .register("deepseek", deepseek_llm)
         // .register("ollama", ollama_llm)
         .build();
 
@@ -65,6 +72,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .step(
             MultiChainStepBuilder::new(MultiChainStepMode::Chat)
                 .provider_id("openai")
+                .id("final_code")
+                .template("Taking into account these optimization suggestions: {{optimization}}\n\nGenerate an optimized version of the code in Rust with explanatory comments.")
+                .temperature(0.2)
+                .build()?
+        )
+        .step(
+            MultiChainStepBuilder::new(MultiChainStepMode::Chat)
+                .provider_id("deepseek")
                 .id("final_code")
                 .template("Taking into account these optimization suggestions: {{optimization}}\n\nGenerate an optimized version of the code in Rust with explanatory comments.")
                 .temperature(0.2)
