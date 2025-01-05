@@ -11,22 +11,20 @@ fn main() {
     // Initialize and configure the LLM client
     let llm = LLMBuilder::new()
         .backend(LLMBackend::Anthropic) // Use Anthropic (Claude) as the LLM provider
-        .api_key(api_key)               // Set the API key
-        .model("claude-3-5-sonnet-20240620")      // Use Claude Instant model
-        .max_tokens(512)                // Limit response length
-        .temperature(0.7)               // Control response randomness (0.0-1.0)
+        .api_key(api_key) // Set the API key
+        .model("claude-3-5-sonnet-20240620") // Use Claude Instant model
+        .max_tokens(512) // Limit response length
+        .temperature(0.7) // Control response randomness (0.0-1.0)
         // Uncomment to set system prompt:
         // .system("You are a helpful assistant specialized in concurrency.")
         .build()
         .expect("Failed to build LLM (Anthropic)");
 
     // Prepare conversation history with example message about Rust concurrency
-    let messages = vec![
-        ChatMessage {
-            role: ChatRole::User,
-            content: "Tell me something about Rust concurrency".into(),
-        },
-    ];
+    let messages = vec![ChatMessage {
+        role: ChatRole::User,
+        content: "Tell me something about Rust concurrency".into(),
+    }];
 
     // Send chat request and handle the response
     match llm.chat(&messages) {
