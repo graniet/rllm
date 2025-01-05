@@ -2,10 +2,12 @@
 name = "rllm"
 version = "0.1.0"
 edition = "2021"
-description = "A Rust LLM crate for Chat and Completions with multiple backends"
+description = "A Rust library unifying multiple LLM backends"
 license = "MIT"
 authors = ["Tristan Granier <graniet75@gmail.com>"]
 repository = "https://github.com/graniet/rllm"
+documentation = "https://docs.rs/rllm"
+homepage = "https://github.com/graniet/rllm"
 
 [features]
 default = []
