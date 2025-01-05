@@ -1,5 +1,5 @@
 //! Anthropic API client implementation for chat and completion functionality.
-//! 
+//!
 //! This module provides integration with Anthropic's Claude models through their API.
 
 use crate::{
@@ -22,6 +22,8 @@ pub struct Anthropic {
     pub timeout_seconds: u64,
     pub system: String,
     pub stream: bool,
+    pub top_p: Option<f32>,
+    pub top_k: Option<u32>,
     client: Client,
 }
 
@@ -38,6 +40,10 @@ struct AnthropicCompleteRequest<'a> {
     system: Option<&'a str>,
     #[serde(skip_serializing_if = "Option::is_none")]
     stream: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    top_p: Option<f32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    top_k: Option<u32>,
 }
 
 /// Individual message in an Anthropic chat conversation.
@@ -79,6 +85,8 @@ impl Anthropic {
         timeout_seconds: Option<u64>,
         system: Option<String>,
         stream: Option<bool>,
+        top_p: Option<f32>,
+        top_k: Option<u32>,
     ) -> Self {
         let mut builder = Client::builder();
         if let Some(sec) = timeout_seconds {
@@ -92,6 +100,8 @@ impl Anthropic {
             system: system.unwrap_or_else(|| "You are a helpful assistant.".to_string()),
             timeout_seconds: timeout_seconds.unwrap_or(30),
             stream: stream.unwrap_or(false),
+            top_p: top_p,
+            top_k: top_k,
             client: builder.build().expect("Failed to build reqwest Client"),
         }
     }
@@ -132,6 +142,8 @@ impl ChatProvider for Anthropic {
             temperature: Some(self.temperature),
             system: Some(&self.system),
             stream: Some(self.stream),
+            top_p: self.top_p,
+            top_k: self.top_k,
         };
 
         let resp = self
