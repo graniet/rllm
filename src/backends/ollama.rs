@@ -1,5 +1,5 @@
 //! Ollama API client implementation for chat and completion functionality.
-//! 
+//!
 //! This module provides integration with Ollama's local LLM server through its API.
 
 use crate::{
@@ -22,6 +22,8 @@ pub struct Ollama {
     pub system: Option<String>,
     pub timeout_seconds: Option<u64>,
     pub stream: Option<bool>,
+    pub top_p: Option<f32>,
+    pub top_k: Option<u32>,
     client: Client,
 }
 
@@ -31,6 +33,13 @@ struct OllamaChatRequest<'a> {
     model: String,
     messages: Vec<OllamaChatMessage<'a>>,
     stream: bool,
+    options: Option<OllamaOptions>,
+}
+
+#[derive(Serialize)]
+struct OllamaOptions {
+    top_p: Option<f32>,
+    top_k: Option<u32>,
 }
 
 /// Individual message in an Ollama chat conversation.
@@ -85,6 +94,8 @@ impl Ollama {
         timeout_seconds: Option<u64>,
         system: Option<String>,
         stream: Option<bool>,
+        top_p: Option<f32>,
+        top_k: Option<u32>,
     ) -> Self {
         let mut builder = Client::builder();
         if let Some(sec) = timeout_seconds {
@@ -99,6 +110,8 @@ impl Ollama {
             timeout_seconds,
             system,
             stream,
+            top_p,
+            top_k,
             client: builder.build().expect("Failed to build reqwest Client"),
         }
     }
@@ -144,6 +157,10 @@ impl ChatProvider for Ollama {
             model: self.model.clone(),
             messages: chat_messages,
             stream: self.stream.unwrap_or(false),
+            options: Some(OllamaOptions {
+                top_p: self.top_p,
+                top_k: self.top_k,
+            }),
         };
 
         let url = format!("{}/api/chat", self.base_url);
