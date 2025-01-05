@@ -1,5 +1,5 @@
 //! Example demonstrating how to chain multiple LLM backends together
-//! 
+//!
 //! This example shows how to:
 //! 1. Initialize multiple LLM backends (OpenAI, Anthropic)
 //! 2. Create a registry to manage multiple backends
@@ -8,9 +8,7 @@
 
 use rllm::{
     builder::{LLMBackend, LLMBuilder},
-    chain::{
-        LLMRegistryBuilder, MultiChainStepBuilder, MultiChainStepMode, MultiPromptChain,
-    },
+    chain::{LLMRegistryBuilder, MultiChainStepBuilder, MultiChainStepMode, MultiPromptChain},
 };
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -21,7 +19,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .model("gpt-4o")
         .build()?;
 
-    // Initialize Anthropic backend with API key and model settings 
+    // Initialize Anthropic backend with API key and model settings
     let anthro_llm = LLMBuilder::new()
         .backend(LLMBackend::Anthropic)
         .api_key(std::env::var("ANTHROPIC_API_KEY").unwrap_or("anthro-key".into()))
@@ -49,7 +47,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             MultiChainStepBuilder::new(MultiChainStepMode::Chat)
                 .provider_id("openai")
                 .id("analysis")
-                .template("Analyse ce code Rust et identifie les problèmes potentiels de performance:\n```rust\nfn process_data(data: Vec<i32>) -> Vec<i32> {\n    data.iter().map(|x| x * 2).collect()\n}```")
+                .template("Analyze this Rust code and identify potential performance issues:\n```rust\nfn process_data(data: Vec<i32>) -> Vec<i32> {\n    data.iter().map(|x| x * 2).collect()\n}```")
                 .temperature(0.7)
                 .build()?
         )
@@ -58,8 +56,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             MultiChainStepBuilder::new(MultiChainStepMode::Chat)
                 .provider_id("anthro")
                 .id("optimization")
-                .template("Voici une analyse de code: {{analysis}}\n\nPropose des optimisations concrètes pour améliorer les performances, en expliquant pourquoi elles seraient bénéfiques.")
+                .template("Here is a code analysis: {{analysis}}\n\nSuggest concrete optimizations to improve performance, explaining why they would be beneficial.")
                 .max_tokens(500)
+                .top_p(0.9)
                 .build()?
         )
         // Step 3: Use OpenAI to generate optimized code
@@ -67,7 +66,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             MultiChainStepBuilder::new(MultiChainStepMode::Chat)
                 .provider_id("openai")
                 .id("final_code")
-                .template("En tenant compte de ces suggestions d'optimisation: {{optimization}}\n\nGénère une version optimisée du code en Rust avec des commentaires explicatifs.")
+                .template("Taking into account these optimization suggestions: {{optimization}}\n\nGenerate an optimized version of the code in Rust with explanatory comments.")
                 .temperature(0.2)
                 .build()?
         )
@@ -77,7 +76,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Results: {:?}", chain_res);
     // Example output format:
     // chain_res["calc1"] => "8"
-    // chain_res["calc2"] => "18" 
+    // chain_res["calc2"] => "18"
     // chain_res["final"] => "Conclusion du calcul : 18"
 
     Ok(())
