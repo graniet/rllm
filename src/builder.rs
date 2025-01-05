@@ -6,7 +6,7 @@ use crate::{error::RllmError, LLMProvider};
 pub enum LLMBackend {
     /// OpenAI API provider (GPT models)
     OpenAI,
-    /// Anthropic API provider (Claude models) 
+    /// Anthropic API provider (Claude models)
     Anthropic,
     /// Ollama local LLM provider
     Ollama,
@@ -33,6 +33,10 @@ pub struct LLMBuilder {
     timeout_seconds: Option<u64>,
     /// Whether to enable streaming responses
     stream: Option<bool>,
+    /// Top p for controlling randomness
+    top_p: Option<f32>,
+    /// Top k for controlling randomness
+    top_k: Option<u32>,
 }
 
 impl LLMBuilder {
@@ -95,6 +99,18 @@ impl LLMBuilder {
         self
     }
 
+    /// Sets the top p for controlling randomness.
+    pub fn top_p(mut self, top_p: f32) -> Self {
+        self.top_p = Some(top_p);
+        self
+    }
+
+    /// Sets the top k for controlling randomness.
+    pub fn top_k(mut self, top_k: u32) -> Self {
+        self.top_k = Some(top_k);
+        self
+    }
+
     /// Builds and returns a configured LLM provider instance.
     ///
     /// # Errors
@@ -129,6 +145,8 @@ impl LLMBuilder {
                         self.timeout_seconds,
                         self.system,
                         self.stream,
+                        self.top_p,
+                        self.top_k,
                     );
                     Ok(Box::new(openai) as Box<dyn LLMProvider>)
                 }
@@ -154,6 +172,8 @@ impl LLMBuilder {
                         self.timeout_seconds,
                         self.system,
                         self.stream,
+                        self.top_p,
+                        self.top_k,
                     );
                     impl crate::LLMProvider for crate::backends::anthropic::Anthropic {}
                     Ok(Box::new(anthro) as Box<dyn LLMProvider>)
@@ -168,7 +188,9 @@ impl LLMBuilder {
                 }
                 #[cfg(feature = "ollama")]
                 {
-                    let url = self.base_url.unwrap_or("http://localhost:11434".to_string());
+                    let url = self
+                        .base_url
+                        .unwrap_or("http://localhost:11434".to_string());
                     let ollama = crate::backends::ollama::Ollama::new(
                         url,
                         self.api_key,
@@ -178,6 +200,8 @@ impl LLMBuilder {
                         self.timeout_seconds,
                         self.system,
                         self.stream,
+                        self.top_p,
+                        self.top_k,
                     );
                     impl crate::LLMProvider for crate::backends::ollama::Ollama {}
                     Ok(Box::new(ollama) as Box<dyn LLMProvider>)
