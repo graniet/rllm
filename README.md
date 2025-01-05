@@ -15,6 +15,16 @@ With a **unified API** and **builder style** - similar to the Stripe experience 
 
 Simply add **RLLM** to your `Cargo.toml`:
 
+## Examples
+
+| Name | Description |
+|------|-------------|
+| `anthropic_example` | Demonstrates integration with Anthropic's Claude model for chat completion |
+| `chain_example` | Shows how to create multi-step prompt chains for exploring programming language features |
+| `multi_backend_example` | Illustrates chaining multiple LLM backends (OpenAI, Anthropic) together in a single workflow |
+| `ollama_example` | Example of using local LLMs through Ollama integration |
+| `openai_example` | Basic OpenAI chat completion example with GPT models |
+
 ## Usage
 
 ```rust
