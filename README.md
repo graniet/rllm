@@ -6,6 +6,8 @@ With a **unified API** and **builder style** - similar to the Stripe experience 
 ## Key Features
 
 - **Multi-backend**: Manage OpenAI, Anthropic, Ollama... through a single entry point.
+- **Multi-step chains**: Create multi-step chains with different backends at each step.
+- **Templates**: Use templates to create complex prompts with variables.
 - **Builder pattern**: Configure your LLM (model, temperature, max_tokens, timeouts...) with a few simple calls.
 - **Chat & Completions**: Two unified traits (`ChatProvider` and `CompletionProvider`) to cover most use cases.
 - **Extensible**: Easily add new backends.
