@@ -10,6 +10,8 @@ pub enum LLMBackend {
     Anthropic,
     /// Ollama local LLM provider
     Ollama,
+    /// DeepSeek API provider (LLM models)
+    DeepSeek,
 }
 
 /// Builder for configuring and instantiating LLM providers.
@@ -205,6 +207,31 @@ impl LLMBuilder {
                     );
                     impl crate::LLMProvider for crate::backends::ollama::Ollama {}
                     Ok(Box::new(ollama) as Box<dyn LLMProvider>)
+                }
+            }
+            LLMBackend::DeepSeek => {
+                #[cfg(not(feature = "deepseek"))]
+                {
+                    Err(RllmError::InvalidRequest("DeepSeek feature not enabled".to_string()))
+                }
+
+                #[cfg(feature = "deepseek")]
+                {
+                    let api_key = self.api_key.ok_or_else(|| {
+                        RllmError::InvalidRequest("No API key provided for DeepSeek".to_string())
+                    })?;
+
+                    let deepseek = crate::backends::deepseek::DeepSeek::new(
+                        api_key,
+                        self.model,
+                        self.max_tokens,
+                        self.temperature,
+                        self.timeout_seconds,
+                        self.system,
+                        self.stream,
+                    );
+
+                    Ok(Box::new(deepseek) as Box<dyn LLMProvider>)
                 }
             }
         }
