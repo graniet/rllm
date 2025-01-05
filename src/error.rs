@@ -6,7 +6,7 @@ pub enum RllmError {
     /// HTTP request/response errors
     HttpError(String),
     /// Authentication and authorization errors
-    AuthError(String), 
+    AuthError(String),
     /// Invalid request parameters or format
     InvalidRequest(String),
     /// Errors returned by the LLM provider
