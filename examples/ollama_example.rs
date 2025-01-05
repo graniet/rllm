@@ -11,11 +11,11 @@ fn main() {
     // Initialize and configure the LLM client
     let llm = LLMBuilder::new()
         .backend(LLMBackend::Ollama) // Use Ollama as the LLM backend
-        .base_url(base_url)          // Set the Ollama server URL
-        .model("llama3.1")            // Use the Mistral model
-        .max_tokens(1000)            // Set maximum response length
-        .temperature(0.7)            // Control response randomness (0.0-1.0)
-        .stream(false)               // Disable streaming responses
+        .base_url(base_url) // Set the Ollama server URL
+        .model("llama3.1") // Use the Mistral model
+        .max_tokens(1000) // Set maximum response length
+        .temperature(0.7) // Control response randomness (0.0-1.0)
+        .stream(false) // Disable streaming responses
         .build()
         .expect("Failed to build LLM (Ollama)");
 
@@ -26,7 +26,7 @@ fn main() {
             content: "Hello, how do I run a local LLM in Rust?".into(),
         },
         ChatMessage {
-            role: ChatRole::Assistant, 
+            role: ChatRole::Assistant,
             content: "One way is to use Ollama with a local model!".into(),
         },
         ChatMessage {
