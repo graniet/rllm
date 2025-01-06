@@ -28,9 +28,10 @@ Simply add **RLLM** to your `Cargo.toml`:
 | `openai_example` | Basic OpenAI chat completion example with GPT models |
 | `xai_example` | Basic xAI chat completion example with Grok models |
 | `deepseek_example` | Basic DeepSeek chat completion example with deepseek-chat models |
-
+| `embedding_example` | Basic embedding example with OpenAI's API |
 
 ## Usage
+Here's a basic example using OpenAI for chat completion. See the examples directory for other backends (Anthropic, Ollama, DeepSeek, xAI), embedding capabilities, and more advanced use cases.
 
 ```rust
 use rllm::{
