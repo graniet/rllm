@@ -185,6 +185,8 @@ impl CompletionProvider for Anthropic {
 
 impl EmbeddingProvider for Anthropic {
     fn embed(&self, _text: Vec<String>) -> Result<Vec<Vec<f32>>, RllmError> {
-        Err(RllmError::ProviderError("Embedding not supported".to_string()))
+        Err(RllmError::ProviderError(
+            "Embedding not supported".to_string(),
+        ))
     }
 }
