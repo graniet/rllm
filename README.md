@@ -17,6 +17,11 @@ With a **unified API** and **builder style** - similar to the Stripe experience 
 
 Simply add **RLLM** to your `Cargo.toml`:
 
+```toml
+[dependencies]
+rllm = { version = "0.1.3", features = ["openai", "anthropic", "ollama"] }
+```
+
 ## Examples
 
 | Name | Description |
