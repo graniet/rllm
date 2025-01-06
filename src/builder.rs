@@ -12,6 +12,8 @@ pub enum LLMBackend {
     Ollama,
     /// DeepSeek API provider (LLM models)
     DeepSeek,
+    /// X.AI API provider (LLM models)
+    XAI,
 }
 
 /// Builder for configuring and instantiating LLM providers.
@@ -212,7 +214,9 @@ impl LLMBuilder {
             LLMBackend::DeepSeek => {
                 #[cfg(not(feature = "deepseek"))]
                 {
-                    Err(RllmError::InvalidRequest("DeepSeek feature not enabled".to_string()))
+                    Err(RllmError::InvalidRequest(
+                        "DeepSeek feature not enabled".to_string(),
+                    ))
                 }
 
                 #[cfg(feature = "deepseek")]
@@ -232,6 +236,33 @@ impl LLMBuilder {
                     );
 
                     Ok(Box::new(deepseek) as Box<dyn LLMProvider>)
+                }
+            }
+            LLMBackend::XAI => {
+                #[cfg(not(feature = "xai"))]
+                {
+                    Err(RllmError::InvalidRequest(
+                        "XAI feature not enabled".to_string(),
+                    ))
+                }
+                #[cfg(feature = "xai")]
+                {
+                    let api_key = self.api_key.ok_or_else(|| {
+                        RllmError::InvalidRequest("No API key provided for XAI".to_string())
+                    })?;
+
+                    let xai = crate::backends::xai::XAI::new(
+                        api_key,
+                        self.model,
+                        self.max_tokens,
+                        self.temperature,
+                        self.timeout_seconds,
+                        self.system,
+                        self.stream,
+                        self.top_p,
+                        self.top_k,
+                    );
+                    Ok(Box::new(xai) as Box<dyn LLMProvider>)
                 }
             }
         }
