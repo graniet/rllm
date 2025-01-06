@@ -5,6 +5,7 @@
 use crate::{
     chat::{ChatMessage, ChatProvider, ChatRole},
     completion::{CompletionProvider, CompletionRequest, CompletionResponse},
+    embedding::EmbeddingProvider,
     error::RllmError,
 };
 use reqwest::blocking::Client;
@@ -77,6 +78,7 @@ impl Anthropic {
     /// * `timeout_seconds` - Request timeout in seconds (defaults to 30)
     /// * `system` - System prompt (defaults to "You are a helpful assistant.")
     /// * `stream` - Whether to stream responses (defaults to false)
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         api_key: impl Into<String>,
         model: Option<String>,
@@ -100,8 +102,8 @@ impl Anthropic {
             system: system.unwrap_or_else(|| "You are a helpful assistant.".to_string()),
             timeout_seconds: timeout_seconds.unwrap_or(30),
             stream: stream.unwrap_or(false),
-            top_p: top_p,
-            top_k: top_k,
+            top_p,
+            top_k,
             client: builder.build().expect("Failed to build reqwest Client"),
         }
     }
@@ -178,5 +180,11 @@ impl CompletionProvider for Anthropic {
         };
         let answer = self.chat(&[chat_message])?;
         Ok(CompletionResponse { text: answer })
+    }
+}
+
+impl EmbeddingProvider for Anthropic {
+    fn embed(&self, _text: Vec<String>) -> Result<Vec<Vec<f32>>, RllmError> {
+        Err(RllmError::ProviderError("Embedding not supported".to_string()))
     }
 }
