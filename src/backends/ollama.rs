@@ -84,7 +84,6 @@ struct OllamaEmbeddingResponse {
     embeddings: Vec<Vec<f32>>,
 }
 
-
 impl Ollama {
     /// Creates a new Ollama client with the specified configuration.
     ///
