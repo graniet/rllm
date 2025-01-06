@@ -142,7 +142,9 @@ impl CompletionProvider for DeepSeek {
 
 impl EmbeddingProvider for DeepSeek {
     fn embed(&self, _text: Vec<String>) -> Result<Vec<Vec<f32>>, RllmError> {
-        Err(RllmError::ProviderError("Embedding not supported".to_string()))
+        Err(RllmError::ProviderError(
+            "Embedding not supported".to_string(),
+        ))
     }
 }
 
