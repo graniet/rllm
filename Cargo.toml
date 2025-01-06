@@ -15,6 +15,7 @@ openai = []
 anthropic = []
 ollama = []
 deepseek = []
+xai = []
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
