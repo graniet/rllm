@@ -6,6 +6,7 @@
 use crate::{
     chat::{ChatMessage, ChatProvider, ChatRole},
     completion::{CompletionProvider, CompletionRequest, CompletionResponse},
+    embedding::EmbeddingProvider,
     error::RllmError,
     LLMProvider,
 };
@@ -25,6 +26,10 @@ pub struct OpenAI {
     pub stream: Option<bool>,
     pub top_p: Option<f32>,
     pub top_k: Option<u32>,
+
+    /// Embedding parameters
+    pub embedding_encoding_format: Option<String>,
+    pub embedding_dimensions: Option<u32>,
     client: Client,
 }
 
@@ -34,6 +39,16 @@ struct OpenAIChatMessage<'a> {
     #[allow(dead_code)]
     role: &'a str,
     content: &'a str,
+}
+
+#[derive(Serialize)]
+struct OpenAIEmbeddingRequest {
+    model: String,
+    input: Vec<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    encoding_format: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    dimensions: Option<u32>,
 }
 
 /// Request payload for OpenAI's chat API endpoint.
@@ -72,6 +87,15 @@ struct OpenAIChatMsg {
     content: String,
 }
 
+#[derive(Deserialize)]
+struct OpenAIEmbeddingData {
+    embedding: Vec<f32>,
+}
+#[derive(Deserialize)]
+struct OpenAIEmbeddingResponse {
+    data: Vec<OpenAIEmbeddingData>,
+}
+
 impl OpenAI {
     /// Creates a new OpenAI client with the specified configuration.
     ///
@@ -84,6 +108,7 @@ impl OpenAI {
     /// * `timeout_seconds` - Request timeout in seconds
     /// * `system` - System prompt
     /// * `stream` - Whether to stream responses
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         api_key: impl Into<String>,
         model: Option<String>,
@@ -94,6 +119,8 @@ impl OpenAI {
         stream: Option<bool>,
         top_p: Option<f32>,
         top_k: Option<u32>,
+        embedding_encoding_format: Option<String>,
+        embedding_dimensions: Option<u32>,
     ) -> Self {
         let mut builder = Client::builder();
         if let Some(sec) = timeout_seconds {
@@ -109,6 +136,8 @@ impl OpenAI {
             stream,
             top_p,
             top_k,
+            embedding_encoding_format,
+            embedding_dimensions,
             client: builder.build().expect("Failed to build reqwest Client"),
         }
     }
@@ -186,6 +215,40 @@ impl CompletionProvider for OpenAI {
         Ok(CompletionResponse {
             text: "OpenAI completion not implemented.".into(),
         })
+    }
+}
+
+#[cfg(feature = "openai")]
+impl EmbeddingProvider for OpenAI {
+    fn embed(&self, input: Vec<String>) -> Result<Vec<Vec<f32>>, RllmError> {
+        if self.api_key.is_empty() {
+            return Err(RllmError::AuthError("Missing OpenAI API key".into()));
+        }
+
+        let emb_format = self
+            .embedding_encoding_format
+            .clone()
+            .unwrap_or_else(|| "float".to_string());
+
+        let body = OpenAIEmbeddingRequest {
+            model: self.model.clone(),
+            input,
+            encoding_format: Some(emb_format),
+            dimensions: self.embedding_dimensions,
+        };
+
+        let resp = self
+            .client
+            .post("https://api.openai.com/v1/embeddings")
+            .bearer_auth(&self.api_key)
+            .json(&body)
+            .send()?
+            .error_for_status()?;
+
+        let json_resp: OpenAIEmbeddingResponse = resp.json()?;
+
+        let embeddings = json_resp.data.into_iter().map(|d| d.embedding).collect();
+        Ok(embeddings)
     }
 }
 
