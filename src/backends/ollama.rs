@@ -5,6 +5,7 @@
 use crate::{
     chat::{ChatMessage, ChatProvider, ChatRole},
     completion::{CompletionProvider, CompletionRequest, CompletionResponse},
+    embedding::EmbeddingProvider,
     error::RllmError,
 };
 use reqwest::blocking::Client;
@@ -72,6 +73,18 @@ struct OllamaGenerateRequest<'a> {
     stream: bool,
 }
 
+#[derive(Serialize)]
+struct OllamaEmbeddingRequest {
+    model: String,
+    input: Vec<String>,
+}
+
+#[derive(Deserialize)]
+struct OllamaEmbeddingResponse {
+    embeddings: Vec<Vec<f32>>,
+}
+
+
 impl Ollama {
     /// Creates a new Ollama client with the specified configuration.
     ///
@@ -85,6 +98,7 @@ impl Ollama {
     /// * `timeout_seconds` - Request timeout in seconds
     /// * `system` - System prompt
     /// * `stream` - Whether to stream responses
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         base_url: impl Into<String>,
         api_key: Option<String>,
@@ -217,5 +231,29 @@ impl CompletionProvider for Ollama {
 
         let answer = json_resp.response.or(json_resp.content).unwrap_or_default();
         Ok(CompletionResponse { text: answer })
+    }
+}
+
+impl EmbeddingProvider for Ollama {
+    fn embed(&self, text: Vec<String>) -> Result<Vec<Vec<f32>>, RllmError> {
+        if self.base_url.is_empty() {
+            return Err(RllmError::InvalidRequest("Missing base_url".to_string()));
+        }
+        let url = format!("{}/api/embed", self.base_url);
+
+        let body = OllamaEmbeddingRequest {
+            model: self.model.clone(),
+            input: text,
+        };
+
+        let resp = self
+            .client
+            .post(&url)
+            .json(&body)
+            .send()?
+            .error_for_status()?;
+
+        let json_resp: OllamaEmbeddingResponse = resp.json()?;
+        Ok(json_resp.embeddings)
     }
 }
