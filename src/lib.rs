@@ -13,8 +13,13 @@ pub mod chain;
 pub mod chat;
 /// Module for text completion interactions with LLMs
 pub mod completion;
+/// Module for embedding interactions with LLMs
+pub mod embedding;
 /// Module defining error types used throughout the crate
 pub mod error;
 
 /// Trait combining chat and completion capabilities that all LLM providers must implement
-pub trait LLMProvider: chat::ChatProvider + completion::CompletionProvider {}
+pub trait LLMProvider:
+    chat::ChatProvider + completion::CompletionProvider + embedding::EmbeddingProvider
+{
+}
