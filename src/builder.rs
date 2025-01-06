@@ -41,6 +41,10 @@ pub struct LLMBuilder {
     top_p: Option<f32>,
     /// Top k for controlling randomness
     top_k: Option<u32>,
+    /// Encoding format for embeddings
+    embedding_encoding_format: Option<String>,
+    /// Dimensions for embeddings
+    embedding_dimensions: Option<u32>,
 }
 
 impl LLMBuilder {
@@ -115,6 +119,21 @@ impl LLMBuilder {
         self
     }
 
+    /// Sets the encoding format for embeddings.
+    pub fn embedding_encoding_format(
+        mut self,
+        embedding_encoding_format: impl Into<String>,
+    ) -> Self {
+        self.embedding_encoding_format = Some(embedding_encoding_format.into());
+        self
+    }
+
+    /// Sets the dimensions for embeddings.
+    pub fn embedding_dimensions(mut self, embedding_dimensions: u32) -> Self {
+        self.embedding_dimensions = Some(embedding_dimensions);
+        self
+    }
+
     /// Builds and returns a configured LLM provider instance.
     ///
     /// # Errors
@@ -151,6 +170,8 @@ impl LLMBuilder {
                         self.stream,
                         self.top_p,
                         self.top_k,
+                        self.embedding_encoding_format,
+                        self.embedding_dimensions,
                     );
                     Ok(Box::new(openai) as Box<dyn LLMProvider>)
                 }
@@ -261,6 +282,8 @@ impl LLMBuilder {
                         self.stream,
                         self.top_p,
                         self.top_k,
+                        self.embedding_encoding_format,
+                        self.embedding_dimensions,
                     );
                     Ok(Box::new(xai) as Box<dyn LLMProvider>)
                 }
