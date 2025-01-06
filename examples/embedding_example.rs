@@ -22,7 +22,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Generate embedding vector for sample text
     let vector = llm.embed(vec!["Hello world!".to_string()])?;
-    
+
     // Print embedding statistics and data
     println!("Data: {:?}", &vector);
 
