@@ -6,6 +6,7 @@
 use crate::{
     chat::{ChatMessage, ChatProvider, ChatRole},
     completion::{CompletionProvider, CompletionRequest, CompletionResponse},
+    embedding::EmbeddingProvider,
     error::RllmError,
     LLMProvider,
 };
@@ -136,6 +137,12 @@ impl CompletionProvider for DeepSeek {
         Ok(CompletionResponse {
             text: "DeepSeek completion not implemented.".into(),
         })
+    }
+}
+
+impl EmbeddingProvider for DeepSeek {
+    fn embed(&self, _text: Vec<String>) -> Result<Vec<Vec<f32>>, RllmError> {
+        Err(RllmError::ProviderError("Embedding not supported".to_string()))
     }
 }
 
