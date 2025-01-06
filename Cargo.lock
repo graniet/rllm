@@ -719,7 +719,7 @@ dependencies = [
 
 [[package]]
 name = "rllm"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "reqwest",
  "serde",
