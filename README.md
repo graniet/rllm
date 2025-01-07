@@ -12,6 +12,7 @@ With a **unified API** and **builder style** - similar to the Stripe experience 
 - **Chat & Completions**: Two unified traits (`ChatProvider` and `CompletionProvider`) to cover most use cases.
 - **Extensible**: Easily add new backends.
 - **Rust-friendly**: Designed with clear traits, unified error handling, and conditional compilation via *features*.
+- **Validation**: Add validation to your requests to ensure the output is what you expect.
 
 ## Installation
 
@@ -26,15 +27,16 @@ rllm = { version = "0.1.3", features = ["openai", "anthropic", "ollama"] }
 
 | Name | Description |
 |------|-------------|
-| `anthropic_example` | Demonstrates integration with Anthropic's Claude model for chat completion |
-| `chain_example` | Shows how to create multi-step prompt chains for exploring programming language features |
-| `multi_backend_example` | Illustrates chaining multiple LLM backends (OpenAI, Anthropic, DeepSeek) together in a single workflow |
-| `ollama_example` | Example of using local LLMs through Ollama integration |
-| `openai_example` | Basic OpenAI chat completion example with GPT models |
-| `xai_example` | Basic xAI chat completion example with Grok models |
-| `deepseek_example` | Basic DeepSeek chat completion example with deepseek-chat models |
-| `embedding_example` | Basic embedding example with OpenAI's API |
-| `phind_example` | Basic Phind chat completion example with Phind-70B model |
+| [`anthropic_example`](examples/anthropic_example.rs) | Demonstrates integration with Anthropic's Claude model for chat completion |
+| [`chain_example`](examples/chain_example.rs) | Shows how to create multi-step prompt chains for exploring programming language features |
+| [`deepseek_example`](examples/deepseek_example.rs) | Basic DeepSeek chat completion example with deepseek-chat models |
+| [`embedding_example`](examples/embedding_example.rs) | Basic embedding example with OpenAI's API |
+| [`multi_backend_example`](examples/multi_backend_example.rs) | Illustrates chaining multiple LLM backends (OpenAI, Anthropic, DeepSeek) together in a single workflow |
+| [`ollama_example`](examples/ollama_example.rs) | Example of using local LLMs through Ollama integration |
+| [`openai_example`](examples/openai_example.rs) | Basic OpenAI chat completion example with GPT models |
+| [`phind_example`](examples/phind_example.rs) | Basic Phind chat completion example with Phind-70B model |
+| [`validator_example`](examples/validator_example.rs) | Basic validator example with Anthropic's Claude model |
+| [`xai_example`](examples/xai_example.rs) | Basic xAI chat completion example with Grok models |
 
 ## Usage
 Here's a basic example using OpenAI for chat completion. See the examples directory for other backends (Anthropic, Ollama, DeepSeek, xAI), embedding capabilities, and more advanced use cases.
