@@ -1,6 +1,6 @@
 [package]
 name = "rllm"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2021"
 description = "A Rust library unifying multiple LLM backends"
 license = "MIT"
@@ -16,10 +16,11 @@ anthropic = []
 ollama = []
 deepseek = []
 xai = []
+phind = []
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
-reqwest = { version = "0.11", features = ["blocking", "json"] }
+reqwest = { version = "0.12.12", features = ["blocking", "json"] }
 serde_json = "1.0"
 
 [dev-dependencies]
