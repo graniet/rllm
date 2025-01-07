@@ -14,6 +14,8 @@ pub enum LLMBackend {
     DeepSeek,
     /// X.AI API provider (LLM models)
     XAI,
+    /// Phind API provider (LLM models)
+    Phind,
 }
 
 /// Builder for configuring and instantiating LLM providers.
@@ -286,6 +288,28 @@ impl LLMBuilder {
                         self.embedding_dimensions,
                     );
                     Ok(Box::new(xai) as Box<dyn LLMProvider>)
+                }
+            }
+            LLMBackend::Phind => {
+                #[cfg(not(feature = "phind"))]
+                {
+                    Err(RllmError::InvalidRequest(
+                        "Phind feature not enabled".to_string(),
+                    ))
+                }
+                #[cfg(feature = "phind")]
+                {
+                    let phind = crate::backends::phind::Phind::new(
+                        self.model,
+                        self.max_tokens,
+                        self.temperature,
+                        self.timeout_seconds,
+                        self.system,
+                        self.stream,
+                        self.top_p,
+                        self.top_k,
+                    );
+                    Ok(Box::new(phind) as Box<dyn LLMProvider>)
                 }
             }
         }
