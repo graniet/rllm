@@ -1,24 +1,44 @@
-//! Rust LLM (RLLM) provides a unified interface for interacting with various LLM providers.
+//! RLLM (Rust LLM) is a unified interface for interacting with Large Language Model providers.
 //!
-//! This crate abstracts away provider-specific implementation details to offer a consistent API
-//! for both chat and completion style interactions with language models.
+//! # Overview
+//! This crate provides a consistent API for working with different LLM backends by abstracting away
+//! provider-specific implementation details. It supports:
+//! 
+//! - Chat-based interactions
+//! - Text completion
+//! - Embeddings generation
+//! - Multiple providers (OpenAI, Anthropic, etc.)
+//! - Request validation and retry logic
+//!
+//! # Architecture
+//! The crate is organized into modules that handle different aspects of LLM interactions:
 
-/// Module containing backend implementations for different LLM providers
+/// Backend implementations for supported LLM providers like OpenAI, Anthropic, etc.
 pub mod backends;
-/// Module for building and configuring LLM providers
+
+/// Builder pattern for configuring and instantiating LLM providers
 pub mod builder;
-/// Module for chain of LLM providers
+
+/// Chain multiple LLM providers together for complex workflows
 pub mod chain;
-/// Module for chat-based interactions with LLMs
+
+/// Chat-based interactions with language models (e.g. ChatGPT style)
 pub mod chat;
-/// Module for text completion interactions with LLMs
+
+/// Text completion capabilities (e.g. GPT-3 style completion)
 pub mod completion;
-/// Module for embedding interactions with LLMs
+
+/// Vector embeddings generation for text
 pub mod embedding;
-/// Module defining error types used throughout the crate
+
+/// Error types and handling
 pub mod error;
 
-/// Trait combining chat and completion capabilities that all LLM providers must implement
+/// Validation wrapper for LLM providers with retry capabilities
+pub mod validated_llm;
+
+/// Core trait that all LLM providers must implement, combining chat, completion
+/// and embedding capabilities into a unified interface
 pub trait LLMProvider:
     chat::ChatProvider + completion::CompletionProvider + embedding::EmbeddingProvider
 {

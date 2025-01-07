@@ -146,9 +146,9 @@ impl ChatProvider for Phind {
                 ChatRole::User => "user",
                 ChatRole::Assistant => "assistant",
             };
-            message_history.push(json!({ 
-                "content": m.content, 
-                "role": role_str 
+            message_history.push(json!({
+                "content": m.content,
+                "role": role_str
             }));
         }
 
