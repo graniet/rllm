@@ -20,7 +20,7 @@ Simply add **RLLM** to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-rllm = { version = "0.1.3", features = ["openai", "anthropic", "ollama"] }
+rllm = { version = "1.0.0", features = ["openai", "anthropic", "ollama"] }
 ```
 
 ## Examples
