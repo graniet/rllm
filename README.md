@@ -1,6 +1,6 @@
 # RLLM
 
-**RLLM** is a **Rust** library that lets you use **multiple LLM backends** in a single project: [OpenAI](https://openai.com), [Anthropic (Claude)](https://www.anthropic.com), [Ollama](https://github.com/ollama/ollama), [DeepSeek](https://www.deepseek.com), [xAI](https://x.ai).
+**RLLM** is a **Rust** library that lets you use **multiple LLM backends** in a single project: [OpenAI](https://openai.com), [Anthropic (Claude)](https://www.anthropic.com), [Ollama](https://github.com/ollama/ollama), [DeepSeek](https://www.deepseek.com), [xAI](https://x.ai) and [Phind](https://www.phind.com).
 With a **unified API** and **builder style** - similar to the Stripe experience - you can easily create **chat** or text **completion** requests without multiplying structures and crates.
 
 ## Key Features
@@ -34,6 +34,7 @@ rllm = { version = "0.1.3", features = ["openai", "anthropic", "ollama"] }
 | `xai_example` | Basic xAI chat completion example with Grok models |
 | `deepseek_example` | Basic DeepSeek chat completion example with deepseek-chat models |
 | `embedding_example` | Basic embedding example with OpenAI's API |
+| `phind_example` | Basic Phind chat completion example with Phind-70B model |
 
 ## Usage
 Here's a basic example using OpenAI for chat completion. See the examples directory for other backends (Anthropic, Ollama, DeepSeek, xAI), embedding capabilities, and more advanced use cases.
@@ -46,9 +47,9 @@ use rllm::{
 
 fn main() {
     let llm = LLMBuilder::new()
-        .backend(LLMBackend::OpenAI) // or LLMBackend::Anthropic, LLMBackend::Ollama, LLMBackend::DeepSeek, LLMBackend::XAI ...
+        .backend(LLMBackend::OpenAI) // or LLMBackend::Anthropic, LLMBackend::Ollama, LLMBackend::DeepSeek, LLMBackend::XAI, LLMBackend::Phind ...
         .api_key(std::env::var("OPENAI_API_KEY").unwrap_or("sk-TESTKEY".into()))
-        .model("gpt-4o") // or model("claude-3-5-sonnet-20240620") or model("grok-2-latest") or model("deepseek-chat") or model("llama3.1") ...
+        .model("gpt-4o") // or model("claude-3-5-sonnet-20240620") or model("grok-2-latest") or model("deepseek-chat") or model("llama3.1") or model("Phind-70B") ...
         .max_tokens(1000)
         .temperature(0.7)
         .system("You are a helpful assistant.")
