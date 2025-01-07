@@ -1,56 +1,71 @@
-/// Module for building and configuring LLM providers.
+//! Builder module for configuring and instantiating LLM providers.
+//!
+//! This module provides a flexible builder pattern for creating and configuring
+//! LLM (Large Language Model) provider instances with various settings and options.
+
 use crate::{error::RllmError, LLMProvider};
+
+/// A function type for validating LLM provider outputs.
+/// Takes a response string and returns Ok(()) if valid, or Err with an error message if invalid.
+pub type ValidatorFn = dyn Fn(&str) -> Result<(), String> + Send + Sync + 'static;
 
 /// Supported LLM backend providers.
 #[derive(Debug, Clone)]
 pub enum LLMBackend {
-    /// OpenAI API provider (GPT models)
+    /// OpenAI API provider (GPT-3, GPT-4, etc.)
     OpenAI,
     /// Anthropic API provider (Claude models)
     Anthropic,
-    /// Ollama local LLM provider
+    /// Ollama local LLM provider for self-hosted models
     Ollama,
-    /// DeepSeek API provider (LLM models)
+    /// DeepSeek API provider for their LLM models
     DeepSeek,
-    /// X.AI API provider (LLM models)
+    /// X.AI (formerly Twitter) API provider
     XAI,
-    /// Phind API provider (LLM models)
+    /// Phind API provider for code-specialized models
     Phind,
 }
 
 /// Builder for configuring and instantiating LLM providers.
-#[derive(Debug, Default)]
+///
+/// Provides a fluent interface for setting various configuration options
+/// like model selection, API keys, generation parameters, etc.
+#[derive(Default)]
 pub struct LLMBuilder {
     /// Selected backend provider
     backend: Option<LLMBackend>,
-    /// API key for authentication
+    /// API key for authentication with the provider
     api_key: Option<String>,
-    /// Base URL for API requests
+    /// Base URL for API requests (primarily for self-hosted instances)
     base_url: Option<String>,
-    /// Model identifier to use
+    /// Model identifier/name to use
     model: Option<String>,
-    /// Maximum tokens to generate
+    /// Maximum tokens to generate in responses
     max_tokens: Option<u32>,
-    /// Temperature for controlling randomness
+    /// Temperature parameter for controlling response randomness (0.0-1.0)
     temperature: Option<f32>,
-    /// System prompt/context
+    /// System prompt/context to guide model behavior
     system: Option<String>,
-    /// Request timeout in seconds
+    /// Request timeout duration in seconds
     timeout_seconds: Option<u64>,
     /// Whether to enable streaming responses
     stream: Option<bool>,
-    /// Top p for controlling randomness
+    /// Top-p (nucleus) sampling parameter
     top_p: Option<f32>,
-    /// Top k for controlling randomness
+    /// Top-k sampling parameter
     top_k: Option<u32>,
-    /// Encoding format for embeddings
+    /// Format specification for embedding outputs
     embedding_encoding_format: Option<String>,
-    /// Dimensions for embeddings
+    /// Vector dimensions for embedding outputs
     embedding_dimensions: Option<u32>,
+    /// Optional validation function for response content
+    validator: Option<Box<ValidatorFn>>,
+    /// Number of retry attempts when validation fails
+    validator_attempts: usize,
 }
 
 impl LLMBuilder {
-    /// Creates a new empty builder instance.
+    /// Creates a new empty builder instance with default values.
     pub fn new() -> Self {
         Self::default()
     }
@@ -85,7 +100,7 @@ impl LLMBuilder {
         self
     }
 
-    /// Sets the temperature for controlling response randomness.
+    /// Sets the temperature for controlling response randomness (0.0-1.0).
     pub fn temperature(mut self, temperature: f32) -> Self {
         self.temperature = Some(temperature);
         self
@@ -109,13 +124,13 @@ impl LLMBuilder {
         self
     }
 
-    /// Sets the top p for controlling randomness.
+    /// Sets the top-p (nucleus) sampling parameter.
     pub fn top_p(mut self, top_p: f32) -> Self {
         self.top_p = Some(top_p);
         self
     }
 
-    /// Sets the top k for controlling randomness.
+    /// Sets the top-k sampling parameter.
     pub fn top_k(mut self, top_k: u32) -> Self {
         self.top_k = Some(top_k);
         self
@@ -136,6 +151,30 @@ impl LLMBuilder {
         self
     }
 
+    /// Sets a validation function to verify LLM responses.
+    ///
+    /// # Arguments
+    ///
+    /// * `f` - Function that takes a response string and returns Ok(()) if valid,
+    ///         or Err with error message if invalid
+    pub fn validator<F>(mut self, f: F) -> Self
+    where
+        F: Fn(&str) -> Result<(), String> + Send + Sync + 'static,
+    {
+        self.validator = Some(Box::new(f));
+        self
+    }
+
+    /// Sets the number of retry attempts for validation failures.
+    ///
+    /// # Arguments
+    ///
+    /// * `attempts` - Maximum number of times to retry generating a valid response
+    pub fn validator_attempts(mut self, attempts: usize) -> Self {
+        self.validator_attempts = attempts;
+        self
+    }
+
     /// Builds and returns a configured LLM provider instance.
     ///
     /// # Errors
@@ -149,20 +188,18 @@ impl LLMBuilder {
             .backend
             .ok_or_else(|| RllmError::InvalidRequest("No backend specified".to_string()))?;
 
-        match backend {
+        #[allow(unused_variables)]
+        let provider: Box<dyn LLMProvider> = match backend {
             LLMBackend::OpenAI => {
                 #[cfg(not(feature = "openai"))]
-                {
-                    Err(RllmError::InvalidRequest(
-                        "OpenAI feature not enabled".to_string(),
-                    ))
-                }
+                return Err(RllmError::InvalidRequest("OpenAI feature not enabled".to_string()));
+
                 #[cfg(feature = "openai")]
                 {
                     let key = self.api_key.ok_or_else(|| {
                         RllmError::InvalidRequest("No API key provided for OpenAI".to_string())
                     })?;
-                    let openai = crate::backends::openai::OpenAI::new(
+                    Box::new(crate::backends::openai::OpenAI::new(
                         key,
                         self.model,
                         self.max_tokens,
@@ -174,17 +211,13 @@ impl LLMBuilder {
                         self.top_k,
                         self.embedding_encoding_format,
                         self.embedding_dimensions,
-                    );
-                    Ok(Box::new(openai) as Box<dyn LLMProvider>)
+                    ))
                 }
             }
             LLMBackend::Anthropic => {
                 #[cfg(not(feature = "anthropic"))]
-                {
-                    Err(RllmError::InvalidRequest(
-                        "Anthropic feature not enabled".to_string(),
-                    ))
-                }
+                return Err(RllmError::InvalidRequest("Anthropic feature not enabled".to_string()));
+
                 #[cfg(feature = "anthropic")]
                 {
                     let api_key = self.api_key.ok_or_else(|| {
@@ -203,16 +236,13 @@ impl LLMBuilder {
                         self.top_k,
                     );
                     impl crate::LLMProvider for crate::backends::anthropic::Anthropic {}
-                    Ok(Box::new(anthro) as Box<dyn LLMProvider>)
+                    Box::new(anthro)
                 }
             }
             LLMBackend::Ollama => {
                 #[cfg(not(feature = "ollama"))]
-                {
-                    Err(RllmError::InvalidRequest(
-                        "Ollama feature not enabled".to_string(),
-                    ))
-                }
+                return Err(RllmError::InvalidRequest("Ollama feature not enabled".to_string()));
+
                 #[cfg(feature = "ollama")]
                 {
                     let url = self
@@ -231,16 +261,12 @@ impl LLMBuilder {
                         self.top_k,
                     );
                     impl crate::LLMProvider for crate::backends::ollama::Ollama {}
-                    Ok(Box::new(ollama) as Box<dyn LLMProvider>)
+                    Box::new(ollama)
                 }
             }
             LLMBackend::DeepSeek => {
                 #[cfg(not(feature = "deepseek"))]
-                {
-                    Err(RllmError::InvalidRequest(
-                        "DeepSeek feature not enabled".to_string(),
-                    ))
-                }
+                return Err(RllmError::InvalidRequest("DeepSeek feature not enabled".to_string()));
 
                 #[cfg(feature = "deepseek")]
                 {
@@ -258,16 +284,13 @@ impl LLMBuilder {
                         self.stream,
                     );
 
-                    Ok(Box::new(deepseek) as Box<dyn LLMProvider>)
+                    Box::new(deepseek)
                 }
             }
             LLMBackend::XAI => {
                 #[cfg(not(feature = "xai"))]
-                {
-                    Err(RllmError::InvalidRequest(
-                        "XAI feature not enabled".to_string(),
-                    ))
-                }
+                return Err(RllmError::InvalidRequest("XAI feature not enabled".to_string()));
+
                 #[cfg(feature = "xai")]
                 {
                     let api_key = self.api_key.ok_or_else(|| {
@@ -287,16 +310,13 @@ impl LLMBuilder {
                         self.embedding_encoding_format,
                         self.embedding_dimensions,
                     );
-                    Ok(Box::new(xai) as Box<dyn LLMProvider>)
+                    Box::new(xai)
                 }
             }
             LLMBackend::Phind => {
                 #[cfg(not(feature = "phind"))]
-                {
-                    Err(RllmError::InvalidRequest(
-                        "Phind feature not enabled".to_string(),
-                    ))
-                }
+                return Err(RllmError::InvalidRequest("Phind feature not enabled".to_string()));
+
                 #[cfg(feature = "phind")]
                 {
                     let phind = crate::backends::phind::Phind::new(
@@ -309,9 +329,20 @@ impl LLMBuilder {
                         self.top_p,
                         self.top_k,
                     );
-                    Ok(Box::new(phind) as Box<dyn LLMProvider>)
+                    Box::new(phind)
                 }
             }
+        };
+
+        #[allow(unreachable_code)]
+        if let Some(validator) = self.validator {
+            Ok(Box::new(crate::validated_llm::ValidatedLLM::new(
+                provider,
+                validator,
+                self.validator_attempts,
+            )))
+        } else {
+            Ok(provider)
         }
     }
 }
