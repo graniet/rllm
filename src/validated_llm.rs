@@ -1,5 +1,5 @@
 //! A module providing validation capabilities for LLM responses through a wrapper implementation.
-//! 
+//!
 //! This module enables adding custom validation logic to any LLM provider by wrapping it in a
 //! `ValidatedLLM` struct. The wrapper will validate responses and retry failed attempts with
 //! feedback to help guide the model toward producing valid output.
@@ -8,7 +8,7 @@
 //!
 //! ```no_run
 //! use rllm::{LLMBuilder, LLMBackend};
-//! 
+//!
 //! let llm = LLMBuilder::new()
 //!     .backend(LLMBackend::OpenAI)
 //!     .validator(|response| {
