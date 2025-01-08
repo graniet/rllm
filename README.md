@@ -13,6 +13,7 @@ With a **unified API** and **builder style** - similar to the Stripe experience 
 - **Extensible**: Easily add new backends.
 - **Rust-friendly**: Designed with clear traits, unified error handling, and conditional compilation via *features*.
 - **Validation**: Add validation to your requests to ensure the output is what you expect.
+- **Evaluation**: Add evaluation to your requests to score the output of LLMs.
 
 ## Installation
 
@@ -37,6 +38,7 @@ rllm = { version = "1.0.0", features = ["openai", "anthropic", "ollama"] }
 | [`phind_example`](examples/phind_example.rs) | Basic Phind chat completion example with Phind-70B model |
 | [`validator_example`](examples/validator_example.rs) | Basic validator example with Anthropic's Claude model |
 | [`xai_example`](examples/xai_example.rs) | Basic xAI chat completion example with Grok models |
+| [`evaluation_example`](examples/evaluation_example.rs) | Basic evaluation example with Anthropic, Phind and DeepSeek |
 
 ## Usage
 Here's a basic example using OpenAI for chat completion. See the examples directory for other backends (Anthropic, Ollama, DeepSeek, xAI), embedding capabilities, and more advanced use cases.
