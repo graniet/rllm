@@ -3,7 +3,7 @@
 //! # Overview
 //! This crate provides a consistent API for working with different LLM backends by abstracting away
 //! provider-specific implementation details. It supports:
-//! 
+//!
 //! - Chat-based interactions
 //! - Text completion
 //! - Embeddings generation
@@ -36,6 +36,9 @@ pub mod error;
 
 /// Validation wrapper for LLM providers with retry capabilities
 pub mod validated_llm;
+
+/// Evaluator for LLM providers
+pub mod evaluator;
 
 /// Core trait that all LLM providers must implement, combining chat, completion
 /// and embedding capabilities into a unified interface
