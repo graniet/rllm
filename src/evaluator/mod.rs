@@ -13,7 +13,7 @@ pub struct LLMEvaluator {
     /// Collection of LLM providers to evaluate
     llms: Vec<Box<dyn LLMProvider>>,
     /// Optional scoring function to evaluate responses
-    scoring_fn: Option<Box<ScoringFn>>,
+    scorings_fns: Vec<Box<ScoringFn>>,
 }
 
 impl LLMEvaluator {
@@ -24,7 +24,7 @@ impl LLMEvaluator {
     pub fn new(llms: Vec<Box<dyn LLMProvider>>) -> Self {
         Self {
             llms,
-            scoring_fn: None,
+            scorings_fns: Vec::new(),
         }
     }
 
@@ -36,7 +36,7 @@ impl LLMEvaluator {
     where
         F: Fn(&str) -> f32 + Send + Sync + 'static,
     {
-        self.scoring_fn = Some(Box::new(f));
+        self.scorings_fns.push(Box::new(f));
         self
     }
 
@@ -51,17 +51,28 @@ impl LLMEvaluator {
         let mut results = Vec::new();
         for llm in &self.llms {
             let response = llm.chat(messages)?;
-            let score = if let Some(ref func) = self.scoring_fn {
-                (func)(&response)
-            } else {
-                0.0
-            };
+            let score = self.compute_score(&response);
             results.push(EvalResult {
                 text: response,
                 score,
             });
         }
         Ok(results)
+    }
+
+    /// Computes the score for a given response
+    ///
+    /// # Arguments
+    /// * `response` - The response to score
+    ///
+    /// # Returns
+    /// The computed score
+    fn compute_score(&self, response: &str) -> f32 {
+        let mut total = 0.0;
+        for sc in &self.scorings_fns {
+            total += sc(response);
+        }
+        total
     }
 }
 
