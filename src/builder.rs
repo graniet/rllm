@@ -192,7 +192,9 @@ impl LLMBuilder {
         let provider: Box<dyn LLMProvider> = match backend {
             LLMBackend::OpenAI => {
                 #[cfg(not(feature = "openai"))]
-                return Err(RllmError::InvalidRequest("OpenAI feature not enabled".to_string()));
+                return Err(RllmError::InvalidRequest(
+                    "OpenAI feature not enabled".to_string(),
+                ));
 
                 #[cfg(feature = "openai")]
                 {
@@ -216,7 +218,9 @@ impl LLMBuilder {
             }
             LLMBackend::Anthropic => {
                 #[cfg(not(feature = "anthropic"))]
-                return Err(RllmError::InvalidRequest("Anthropic feature not enabled".to_string()));
+                return Err(RllmError::InvalidRequest(
+                    "Anthropic feature not enabled".to_string(),
+                ));
 
                 #[cfg(feature = "anthropic")]
                 {
@@ -241,7 +245,9 @@ impl LLMBuilder {
             }
             LLMBackend::Ollama => {
                 #[cfg(not(feature = "ollama"))]
-                return Err(RllmError::InvalidRequest("Ollama feature not enabled".to_string()));
+                return Err(RllmError::InvalidRequest(
+                    "Ollama feature not enabled".to_string(),
+                ));
 
                 #[cfg(feature = "ollama")]
                 {
@@ -266,7 +272,9 @@ impl LLMBuilder {
             }
             LLMBackend::DeepSeek => {
                 #[cfg(not(feature = "deepseek"))]
-                return Err(RllmError::InvalidRequest("DeepSeek feature not enabled".to_string()));
+                return Err(RllmError::InvalidRequest(
+                    "DeepSeek feature not enabled".to_string(),
+                ));
 
                 #[cfg(feature = "deepseek")]
                 {
@@ -289,7 +297,9 @@ impl LLMBuilder {
             }
             LLMBackend::XAI => {
                 #[cfg(not(feature = "xai"))]
-                return Err(RllmError::InvalidRequest("XAI feature not enabled".to_string()));
+                return Err(RllmError::InvalidRequest(
+                    "XAI feature not enabled".to_string(),
+                ));
 
                 #[cfg(feature = "xai")]
                 {
@@ -315,7 +325,9 @@ impl LLMBuilder {
             }
             LLMBackend::Phind => {
                 #[cfg(not(feature = "phind"))]
-                return Err(RllmError::InvalidRequest("Phind feature not enabled".to_string()));
+                return Err(RllmError::InvalidRequest(
+                    "Phind feature not enabled".to_string(),
+                ));
 
                 #[cfg(feature = "phind")]
                 {

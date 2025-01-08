@@ -10,18 +10,19 @@ fn main() {
 
     // Initialize and configure the LLM client with validation
     let llm = LLMBuilder::new()
-        .backend(LLMBackend::Anthropic)        // Use Anthropic's Claude model
-        .model("claude-3-5-sonnet-20240620")   // Specify model version
-        .api_key(api_key)                      // Set API credentials
-        .max_tokens(512)                       // Limit response length
-        .temperature(0.7)                      // Control response randomness
-        .stream(false)                         // Disable streaming responses
-        .validator(|resp| {                    // Add JSON validation
+        .backend(LLMBackend::Anthropic) // Use Anthropic's Claude model
+        .model("claude-3-5-sonnet-20240620") // Specify model version
+        .api_key(api_key) // Set API credentials
+        .max_tokens(512) // Limit response length
+        .temperature(0.7) // Control response randomness
+        .stream(false) // Disable streaming responses
+        .validator(|resp| {
+            // Add JSON validation
             serde_json::from_str::<serde_json::Value>(resp)
                 .map(|_| ())
                 .map_err(|e| e.to_string())
         })
-        .validator_attempts(3)                 // Allow up to 3 retries on validation failure
+        .validator_attempts(3) // Allow up to 3 retries on validation failure
         .build()
         .expect("Failed to build LLM (Phind)");
 
