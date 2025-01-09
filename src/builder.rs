@@ -26,6 +26,51 @@ pub enum LLMBackend {
     Phind,
 }
 
+/// Implements string parsing for LLMBackend enum.
+///
+/// Converts a string representation of a backend provider name into the corresponding
+/// LLMBackend variant. The parsing is case-insensitive.
+///
+/// # Arguments
+///
+/// * `s` - The string to parse
+///
+/// # Returns
+///
+/// * `Ok(LLMBackend)` - The corresponding backend variant if valid
+/// * `Err(RllmError)` - An error if the string doesn't match any known backend
+///
+/// # Examples
+///
+/// ```
+/// use std::str::FromStr;
+/// use rllm::LLMBackend;
+///
+/// let backend = LLMBackend::from_str("openai").unwrap();
+/// assert!(matches!(backend, LLMBackend::OpenAI));
+///
+/// let err = LLMBackend::from_str("invalid").unwrap_err();
+/// assert!(err.to_string().contains("Unknown LLM backend"));
+/// ```
+impl std::str::FromStr for LLMBackend {
+    type Err = RllmError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "openai" => Ok(LLMBackend::OpenAI),
+            "anthropic" => Ok(LLMBackend::Anthropic), 
+            "ollama" => Ok(LLMBackend::Ollama),
+            "deepseek" => Ok(LLMBackend::DeepSeek),
+            "xai" => Ok(LLMBackend::XAI),
+            "phind" => Ok(LLMBackend::Phind),
+            _ => Err(RllmError::InvalidRequest(format!(
+                "Unknown LLM backend: {}",
+                s
+            ))),
+        }
+    }
+}
+
 /// Builder for configuring and instantiating LLM providers.
 ///
 /// Provides a fluent interface for setting various configuration options
@@ -358,3 +403,5 @@ impl LLMBuilder {
         }
     }
 }
+
+
