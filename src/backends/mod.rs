@@ -15,3 +15,6 @@ pub mod xai;
 
 #[cfg(feature = "phind")]
 pub mod phind;
+
+#[cfg(feature = "google")]
+pub mod google;
