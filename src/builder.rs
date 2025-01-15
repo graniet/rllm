@@ -24,6 +24,8 @@ pub enum LLMBackend {
     XAI,
     /// Phind API provider for code-specialized models
     Phind,
+    /// Google Gemini API provider
+    Google,
 }
 
 /// Implements string parsing for LLMBackend enum.
@@ -387,6 +389,32 @@ impl LLMBuilder {
                         self.top_k,
                     );
                     Box::new(phind)
+                }
+            },
+            LLMBackend::Google => {
+                #[cfg(not(feature = "google"))]
+                return Err(RllmError::InvalidRequest(
+                    "Google feature not enabled".to_string(),
+                ));
+
+                #[cfg(feature = "google")]
+                {
+                    let api_key = self.api_key.ok_or_else(|| {
+                        RllmError::InvalidRequest("No API key provided for Google".to_string())
+                    })?;
+
+                    let google = crate::backends::google::Google::new(
+                        api_key,
+                        self.model,
+                        self.max_tokens,
+                        self.temperature,
+                        self.timeout_seconds,
+                        self.system,
+                        self.stream,
+                        self.top_p,
+                        self.top_k,
+                    );
+                    Box::new(google)
                 }
             }
         };
