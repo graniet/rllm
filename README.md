@@ -39,9 +39,11 @@ rllm = { version = "1.1.0", features = ["openai", "anthropic", "ollama"] }
 | [`validator_example`](examples/validator_example.rs) | Basic validator example with Anthropic's Claude model |
 | [`xai_example`](examples/xai_example.rs) | Basic xAI chat completion example with Grok models |
 | [`evaluation_example`](examples/evaluation_example.rs) | Basic evaluation example with Anthropic, Phind and DeepSeek |
+| [`google_example`](examples/google_example.rs) | Basic Google Gemini chat completion example with Gemini models |
+| [`google_embedding_example`](examples/google_embedding_example.rs) | Basic Google Gemini embedding example with Gemini models |
 
 ## Usage
-Here's a basic example using OpenAI for chat completion. See the examples directory for other backends (Anthropic, Ollama, DeepSeek, xAI), embedding capabilities, and more advanced use cases.
+Here's a basic example using OpenAI for chat completion. See the examples directory for other backends (Anthropic, Ollama, DeepSeek, xAI, Google, Phind), embedding capabilities, and more advanced use cases.
 
 ```rust
 use rllm::{
