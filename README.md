@@ -1,11 +1,11 @@
 # RLLM
 
-**RLLM** is a **Rust** library that lets you use **multiple LLM backends** in a single project: [OpenAI](https://openai.com), [Anthropic (Claude)](https://www.anthropic.com), [Ollama](https://github.com/ollama/ollama), [DeepSeek](https://www.deepseek.com), [xAI](https://x.ai) and [Phind](https://www.phind.com).
+**RLLM** is a **Rust** library that lets you use **multiple LLM backends** in a single project: [OpenAI](https://openai.com), [Anthropic (Claude)](https://www.anthropic.com), [Ollama](https://github.com/ollama/ollama), [DeepSeek](https://www.deepseek.com), [xAI](https://x.ai), [Phind](https://www.phind.com) and [Google](https://cloud.google.com/gemini).
 With a **unified API** and **builder style** - similar to the Stripe experience - you can easily create **chat** or text **completion** requests without multiplying structures and crates.
 
 ## Key Features
 
-- **Multi-backend**: Manage OpenAI, Anthropic, Ollama, DeepSeek, xAI through a single entry point.
+- **Multi-backend**: Manage OpenAI, Anthropic, Ollama, DeepSeek, xAI, Phind and Google through a single entry point.
 - **Multi-step chains**: Create multi-step chains with different backends at each step.
 - **Templates**: Use templates to create complex prompts with variables.
 - **Builder pattern**: Configure your LLM (model, temperature, max_tokens, timeouts...) with a few simple calls.
