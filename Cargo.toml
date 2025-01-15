@@ -17,6 +17,7 @@ ollama = []
 deepseek = []
 xai = []
 phind = []
+google = []
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
