@@ -1,5 +1,9 @@
 # RLLM
 
+> Note: Starting with version 1.x, RLLM has become a simple wrapper around llm.
+> Both crates will be actively maintained and kept in sync.
+> If you are new to this ecosystem, you can use either llm directly or rllm - they provide the same features.
+
 **RLLM** is a **Rust** library that lets you use **multiple LLM backends** in a single project: [OpenAI](https://openai.com), [Anthropic (Claude)](https://www.anthropic.com), [Ollama](https://github.com/ollama/ollama), [DeepSeek](https://www.deepseek.com), [xAI](https://x.ai), [Phind](https://www.phind.com) and [Google](https://cloud.google.com/gemini).
 With a **unified API** and **builder style** - similar to the Stripe experience - you can easily create **chat** or text **completion** requests without multiplying structures and crates.
 
