@@ -566,9 +566,9 @@ checksum = "4ee93343901ab17bd981295f2cf0026d4ad018c7c31ba84549a4ddbb47a45104"
 
 [[package]]
 name = "llm"
-version = "1.0.0"
+version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "17934bdfdfe902bc0c88da64180b1d5ddf5a9afad144399dbf54c512104f3223"
+checksum = "91e92513f470f41bf300f4c4ff0f99a8eb121410c76f7254f6742b33c954f0e4"
 dependencies = [
  "reqwest",
  "serde",
