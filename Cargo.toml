@@ -1,6 +1,6 @@
 [package]
 name = "rllm"
-version = "1.1.4"
+version = "1.1.5"
 edition = "2021"
 description = "Unifies multiple LLM backends in Rust."
 license = "MIT"
@@ -20,7 +20,7 @@ phind = []
 google = []
 
 [dependencies]
-llm = {version = "1.0.3", features = ["openai", "anthropic", "ollama", "deepseek", "xai", "phind", "google"]}
+llm = {version = "1.0.4", features = ["openai", "anthropic", "ollama", "deepseek", "xai", "phind", "google"]}
 serde = { version = "1.0", features = ["derive"] }
 reqwest = { version = "0.12.12", features = ["blocking", "json"] }
 serde_json = "1.0"
