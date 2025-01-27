@@ -4,12 +4,12 @@
 > Both crates will be actively maintained and kept in sync.
 > If you are new to this ecosystem, you can use either llm directly or rllm - they provide the same features.
 
-**RLLM** is a **Rust** library that lets you use **multiple LLM backends** in a single project: [OpenAI](https://openai.com), [Anthropic (Claude)](https://www.anthropic.com), [Ollama](https://github.com/ollama/ollama), [DeepSeek](https://www.deepseek.com), [xAI](https://x.ai), [Phind](https://www.phind.com) and [Google](https://cloud.google.com/gemini).
+**RLLM** is a **Rust** library that lets you use **multiple LLM backends** in a single project:  [OpenAI](https://openai.com), [Anthropic (Claude)](https://www.anthropic.com), [Ollama](https://github.com/ollama/ollama), [DeepSeek](https://www.deepseek.com), [xAI](https://x.ai), [Phind](https://www.phind.com), [Groq](https://www.groq.com) and [Google](https://cloud.google.com/gemini).
 With a **unified API** and **builder style** - similar to the Stripe experience - you can easily create **chat** or text **completion** requests without multiplying structures and crates.
 
 ## Key Features
 
-- **Multi-backend**: Manage OpenAI, Anthropic, Ollama, DeepSeek, xAI, Phind and Google through a single entry point.
+- **Multi-backend**: Manage OpenAI, Anthropic, Ollama, DeepSeek, xAI, Phind, Groq and Google through a single entry point.
 - **Multi-step chains**: Create multi-step chains with different backends at each step.
 - **Templates**: Use templates to create complex prompts with variables.
 - **Builder pattern**: Configure your LLM (model, temperature, max_tokens, timeouts...) with a few simple calls.
@@ -18,6 +18,7 @@ With a **unified API** and **builder style** - similar to the Stripe experience 
 - **Rust-friendly**: Designed with clear traits, unified error handling, and conditional compilation via *features*.
 - **Validation**: Add validation to your requests to ensure the output is what you expect.
 - **Evaluation**: Add evaluation to your requests to score the output of LLMs.
+- **Function calling**: Add function calling to your requests to use tools in your LLMs.
 
 ## Installation
 
@@ -25,7 +26,7 @@ Simply add **RLLM** to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-rllm = { version = "1.1.4", features = ["openai", "anthropic", "ollama"] }
+rllm = { version = "1.1.5", features = ["openai", "anthropic", "ollama"] }
 ```
 
 ## Examples
@@ -45,6 +46,9 @@ rllm = { version = "1.1.4", features = ["openai", "anthropic", "ollama"] }
 | [`evaluation_example`](examples/evaluation_example.rs) | Basic evaluation example with Anthropic, Phind and DeepSeek |
 | [`google_example`](examples/google_example.rs) | Basic Google Gemini chat completion example with Gemini models |
 | [`google_embedding_example`](examples/google_embedding_example.rs) | Basic Google Gemini embedding example with Gemini models |
+
+another example on [LLM crate](https://github.com/graniet/llm)
+
 
 ## Usage
 Here's a basic example using OpenAI for chat completion. See the examples directory for other backends (Anthropic, Ollama, DeepSeek, xAI, Google, Phind), embedding capabilities, and more advanced use cases.
