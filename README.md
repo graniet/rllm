@@ -1,8 +1,8 @@
 # RLLM
 
-> Note: Starting with version 1.x, RLLM has become a simple wrapper around llm.
+> Note: Starting with version 1.x, RLLM has become a simple wrapper around [llm](https://github.com/graniet/llm).
 > Both crates will be actively maintained and kept in sync.
-> If you are new to this ecosystem, you can use either llm directly or rllm - they provide the same features.
+> If you are new to this ecosystem, you can use either [llm](https://github.com/graniet/llm) directly or rllm - they provide the same features.
 
 **RLLM** is a **Rust** library that lets you use **multiple LLM backends** in a single project:  [OpenAI](https://openai.com), [Anthropic (Claude)](https://www.anthropic.com), [Ollama](https://github.com/ollama/ollama), [DeepSeek](https://www.deepseek.com), [xAI](https://x.ai), [Phind](https://www.phind.com), [Groq](https://www.groq.com) and [Google](https://cloud.google.com/gemini).
 With a **unified API** and **builder style** - similar to the Stripe experience - you can easily create **chat** or text **completion** requests without multiplying structures and crates.
@@ -18,7 +18,11 @@ With a **unified API** and **builder style** - similar to the Stripe experience 
 - **Rust-friendly**: Designed with clear traits, unified error handling, and conditional compilation via *features*.
 - **Validation**: Add validation to your requests to ensure the output is what you expect.
 - **Evaluation**: Add evaluation to your requests to score the output of LLMs.
+- **Parallel Evaluation**: Evaluate multiple LLM providers in parallel and select the best response based on scoring functions.
 - **Function calling**: Add function calling to your requests to use tools in your LLMs.
+- **REST API**: Serve any LLM backend as a REST API with openai standard format.
+- **Vision**: Add vision to your requests to use images in your LLMs.
+- **Reasoning**: Add reasoning to your requests to use reasoning in your LLMs.
 
 ## Installation
 
