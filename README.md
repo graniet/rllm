@@ -7,6 +7,8 @@
 **RLLM** is a **Rust** library that lets you use **multiple LLM backends** in a single project:  [OpenAI](https://openai.com), [Anthropic (Claude)](https://www.anthropic.com), [Ollama](https://github.com/ollama/ollama), [DeepSeek](https://www.deepseek.com), [xAI](https://x.ai), [Phind](https://www.phind.com), [Groq](https://www.groq.com) and [Google](https://cloud.google.com/gemini).
 With a **unified API** and **builder style** - similar to the Stripe experience - you can easily create **chat** or text **completion** requests without multiplying structures and crates.
 
+### Base crate is :  [LLM](https://github.com/graniet/llm) 
+
 ## Key Features
 
 - **Multi-backend**: Manage OpenAI, Anthropic, Ollama, DeepSeek, xAI, Phind, Groq and Google through a single entry point.
@@ -30,7 +32,7 @@ Simply add **RLLM** to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-rllm = { version = "1.1.5", features = ["openai", "anthropic", "ollama"] }
+rllm = { version = "1.1.8", features = ["openai", "anthropic", "ollama"] }
 ```
 
 ## Examples
